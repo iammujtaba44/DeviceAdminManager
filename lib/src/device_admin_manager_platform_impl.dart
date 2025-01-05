@@ -8,7 +8,7 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
   DeviceAdminManagerPlatformImpl();
 
   /// The method channel used to interact with the native platform.
-  final _methodChannel = const MethodChannel('device_policy_controller');
+  final _methodChannel = const MethodChannel('device_admin_manager');
 
   @override
   void handleBootCompleted(handler) {

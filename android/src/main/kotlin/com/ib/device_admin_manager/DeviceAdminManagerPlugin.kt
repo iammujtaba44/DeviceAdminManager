@@ -50,7 +50,7 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
 
     companion object {
         fun log(message: String) = Log.d("dpc::", message)
-        private const val methodChannelName = "device_policy_controller"
+        private const val methodChannelName = "device_admin_manager"     
         fun methodChannel(messenger: BinaryMessenger) = MethodChannel(messenger, methodChannelName)
 
         const val DEVICE_ADMIN_ENABLED_ACTION = "android.app.action.DEVICE_ADMIN_ENABLED"
@@ -521,7 +521,7 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 val intentFilter = IntentFilter()
                 actions.forEach { intentFilter.addAction(it) }
                 log("actions: ${actions.joinToString(", ") }}")
-                context.registerReceiver(appDeviceAdminReceiver, intentFilter)
+                context.registerReceiver(appDeviceAdminReceiver, intentFilter, 2)
                 adminComponentName = appDeviceAdminReceiver.getWho(context)
                 log("registerReceiver packageName: " + adminComponentName.packageName + ", className: " + adminComponentName.className)
                 mDevicePolicyManager =
