@@ -30,3 +30,6 @@ migrate_working_dir/
 build/
 
 .vscode
+
+# Provisioning data
+provisioning_data.example-app.json
