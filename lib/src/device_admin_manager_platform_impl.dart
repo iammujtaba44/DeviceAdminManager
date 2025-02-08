@@ -156,4 +156,9 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
   Future<void> remove(String contentKey) {
     return _methodChannel.invokeMethod('remove', {'contentKey': contentKey});
   }
+
+  @override
+  Future<void> setDeviceAdminPolicies() async {
+    await _methodChannel.invokeMethod('setDeviceAdminPolicies');
+  }
 }

@@ -60,4 +60,14 @@ class AppDeviceAdminReceiver : DeviceAdminReceiver() {
         }
     }
 
+    override fun onEnabled(context: Context, intent: Intent) {
+        super.onEnabled(context, intent)
+        // Handle enabling of device admin
+    }
+
+    override fun onDisabled(context: Context, intent: Intent) {
+        super.onDisabled(context, intent)
+        // Handle disabling of device admin
+    }
+
 }

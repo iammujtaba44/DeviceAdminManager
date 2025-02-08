@@ -218,6 +218,11 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 remove(contentKey!!, result)
             }
 
+            "setDeviceAdminPolicies" -> {
+                setDeviceAdminPolicies()
+                result.success(null)
+            }
+
             "clear" -> clear(result)
 
             else -> result.notImplemented()
@@ -852,6 +857,13 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             }
         }
         return false
+    }
+
+    private fun setDeviceAdminPolicies() {
+        if (isAdminActive) {
+            // Example: Disable factory reset
+            mDevicePolicyManager.setFactoryResetProtectionPolicy(adminComponentName, null)
+        }
     }
 
 }

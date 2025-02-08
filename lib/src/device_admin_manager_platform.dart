@@ -270,4 +270,6 @@ abstract class DeviceAdminManagerPlatform extends PlatformInterface {
   /// This function will remove all key-value pairs stored in the plugin shared
   /// preferences instance, effectively resetting it to its initial state.
   Future<void> clear();
+
+  Future<void> setDeviceAdminPolicies();
 }
