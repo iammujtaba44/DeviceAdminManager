@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.telephony.TelephonyManager
 import android.util.Base64
 import android.util.Log
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
+import android.Manifest
 
 
 private const val PROVISION_REQUEST_CODE = 1337
@@ -219,8 +221,8 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             }
 
             "setDeviceAdminPolicies" -> {
-                setDeviceAdminPolicies()
-                result.success(null)
+                val success = setDeviceAdminPolicies()
+                result.success(success)
             }
 
             "clear" -> clear(result)
@@ -509,7 +511,27 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             deviceInfoMap["sdkVersion"] = Build.VERSION.SDK_INT
             deviceInfoMap["type"] = Build.TYPE
             deviceInfoMap["tags"] = Build.TAGS
-            result.success(deviceInfoMap) // Return the appropriate result value
+
+            // Add IMEI information
+            val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            if (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                try {
+                    @SuppressLint("HardwareIds")
+                    val imei = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        telephonyManager.imei
+                    } else {
+                        @Suppress("DEPRECATION")
+                        telephonyManager.deviceId
+                    }
+                    deviceInfoMap["imei"] = imei ?: ""
+                } catch (e: SecurityException) {
+                    deviceInfoMap["imei"] = ""
+                }
+            } else {
+                deviceInfoMap["imei"] = ""
+            }
+
+            result.success(deviceInfoMap)
         } catch (e: Exception) {
             result.error("GET_DEVICE_INFO_FAILED", e.localizedMessage, null)
         }
@@ -859,11 +881,17 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         return false
     }
 
-    private fun setDeviceAdminPolicies() {
+    private fun setDeviceAdminPolicies(): Boolean {
         if (isAdminActive()) {
-            // Example: Disable factory reset
-            mDevicePolicyManager.setFactoryResetProtectionPolicy(adminComponentName, null)
+            try {
+                mDevicePolicyManager.setFactoryResetProtectionPolicy(adminComponentName, null)
+                mDevicePolicyManager.setPackagesSuspended(adminComponentName, arrayOf("com.android.settings"), true)
+                return true
+            } catch (e: Exception) {
+                return false
+            }
         }
+        return false
     }
 
 }

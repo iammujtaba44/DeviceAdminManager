@@ -12,6 +12,7 @@
       "android.permission.WRITE_SYNC_SETTINGS"/>
   <uses-permission android:name=
       "com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+  <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
   <application
       android:name="${applicationName}">
