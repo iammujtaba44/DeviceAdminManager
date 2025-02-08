@@ -860,7 +860,7 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     }
 
     private fun setDeviceAdminPolicies() {
-        if (isAdminActive) {
+        if (isAdminActive()) {
             // Example: Disable factory reset
             mDevicePolicyManager.setFactoryResetProtectionPolicy(adminComponentName, null)
         }
