@@ -282,6 +282,4 @@ abstract class DeviceAdminManagerPlatform extends PlatformInterface {
   Future<bool> wipeResetProtectionData();
 
   Future<bool> wipeNormalFactoryData();
-
-  Future<String?> getDeviceOwnerName();
 }

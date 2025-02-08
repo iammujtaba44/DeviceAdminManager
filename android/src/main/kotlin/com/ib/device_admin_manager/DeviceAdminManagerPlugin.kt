@@ -253,8 +253,6 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
 
             "clear" -> clear(result)
 
-            "getDeviceOwnerName" -> getDeviceOwnerName(result)
-
             else -> result.notImplemented()
         }
     }
@@ -979,21 +977,6 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         return false
     }
 
-    private fun getDeviceOwnerName(result: Result) {
-        if (isAdminActive()) {
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    val imei = mDevicePolicyManager.getDeviceId(adminComponentName)
-                    Log.d("DeviceInfo", "IMEI: $imei")
-                }
-                result.success(true)
-            } catch (e: Exception) {
-                Log.e("DeviceInfo", "Error getting IMEI: ${e.message}")
-                result.success(false)
-            }
-        } else {
-            result.success(false)
-        }
-    }
+
 
 }
