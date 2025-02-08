@@ -236,7 +236,24 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 result.success(success)
             }
 
+            "wipeExternalStorage" -> {
+                val success = wipeExternalStorage()
+                result.success(success)
+            }
+
+            "wipeResetProtectionData" -> {
+                val success = wipeResetProtectionData()
+                result.success(success)
+            }
+
+            "wipeNormalFactoryData" -> {
+                val success = wipeNormalFactoryData()
+                result.success(success)
+            }
+
             "clear" -> clear(result)
+
+            "getDeviceOwnerName" -> getDeviceOwnerName(result)
 
             else -> result.notImplemented()
         }
@@ -925,6 +942,58 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             }
         }
         return false
+    }
+
+    private fun wipeResetProtectionData(): Boolean {
+        if (isAdminActive()) {
+            try {
+                dpm.wipeData(DevicePolicyManager.WIPE_RESET_PROTECTION_DATA);
+                return true
+            } catch (e: Exception) {
+                return false
+            }
+        }
+        return false
+    }
+    private fun wipeExternalStorage(): Boolean {
+        if (isAdminActive()) {
+            try {
+                dpm.wipeData(DevicePolicyManager.WIPE_EXTERNAL_STORAGE);
+                 return true
+            } catch (e: Exception) {
+                return false
+            }
+        }
+        return false
+    }
+
+    private fun wipeNormalFactoryData(): Boolean {
+        if (isAdminActive()) {
+            try {
+                dpm.wipeData(0);
+                 return true
+            } catch (e: Exception) {
+                return false
+            }
+        }
+        return false
+    }
+
+    private fun getDeviceOwnerName(result: Result) {
+        if (isAdminActive()) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    val imei = mDevicePolicyManager.getDeviceId(adminComponentName)
+                    Log.d("DeviceInfo", "IMEI: $imei")
+                }
+                result.success(true)
+            } catch (e: Exception) {
+                Log.e("DeviceInfo", "Error getting IMEI: ${e.message}")
+                result.success(false)
+            }
+        } else {
+            result.success(false)
+        }
     }
 
 }

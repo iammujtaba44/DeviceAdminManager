@@ -276,4 +276,12 @@ abstract class DeviceAdminManagerPlatform extends PlatformInterface {
   Future<bool> setPackagesSuspendedEnable();
 
   Future<bool> setPackagesSuspendedDisable();
+
+  Future<bool> wipeExternalStorage();
+
+  Future<bool> wipeResetProtectionData();
+
+  Future<bool> wipeNormalFactoryData();
+
+  Future<String?> getDeviceOwnerName();
 }

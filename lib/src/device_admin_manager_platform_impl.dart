@@ -171,4 +171,24 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
   Future<bool> setPackagesSuspendedDisable() async {
     return await _methodChannel.invokeMethod('setPackagesSuspendedDisable');
   }
+
+  @override
+  Future<bool> wipeExternalStorage() async {
+    return await _methodChannel.invokeMethod('wipeExternalStorage');
+  }
+
+  @override
+  Future<bool> wipeResetProtectionData() async {
+    return await _methodChannel.invokeMethod('wipeResetProtectionData');
+  }
+
+  @override
+  Future<bool> wipeNormalFactoryData() async {
+    return await _methodChannel.invokeMethod('wipeNormalFactoryData');
+  }
+
+  @override
+  Future<String?> getDeviceOwnerName() async {
+    return await _methodChannel.invokeMethod('getDeviceOwnerName');
+  }
 }
