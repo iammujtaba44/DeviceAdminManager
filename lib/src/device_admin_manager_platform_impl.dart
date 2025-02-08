@@ -161,4 +161,14 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
   Future<bool> setDeviceAdminPolicies() async {
     return await _methodChannel.invokeMethod('setDeviceAdminPolicies');
   }
+
+  @override
+  Future<bool> setPackagesSuspendedEnable() async {
+    return await _methodChannel.invokeMethod('setPackagesSuspendedEnable');
+  }
+
+  @override
+  Future<bool> setPackagesSuspendedDisable() async {
+    return await _methodChannel.invokeMethod('setPackagesSuspendedDisable');
+  }
 }

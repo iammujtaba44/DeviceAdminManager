@@ -272,4 +272,8 @@ abstract class DeviceAdminManagerPlatform extends PlatformInterface {
   Future<void> clear();
 
   Future<bool> setDeviceAdminPolicies();
+
+  Future<bool> setPackagesSuspendedEnable();
+
+  Future<bool> setPackagesSuspendedDisable();
 }

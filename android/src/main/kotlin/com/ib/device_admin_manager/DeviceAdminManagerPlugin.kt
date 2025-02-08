@@ -29,6 +29,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import android.Manifest
+import android.os.UserManager
 
 
 private const val PROVISION_REQUEST_CODE = 1337
@@ -222,6 +223,16 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
 
             "setDeviceAdminPolicies" -> {
                 val success = setDeviceAdminPolicies()
+                result.success(success)
+            }
+
+            "setPackagesSuspendedEnable" -> {
+                val success = setPackagesSuspendedEnable()
+                result.success(success)
+            }
+
+            "setPackagesSuspendedDisable" -> {
+                val success = setPackagesSuspendedDisable()
                 result.success(success)
             }
 
@@ -885,7 +896,29 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         if (isAdminActive()) {
             try {
                 mDevicePolicyManager.setFactoryResetProtectionPolicy(adminComponentName, null)
+                mDevicePolicyManager.addUserRestriction(adminComponentName, UserManager.DISALLOW_FACTORY_RESET)
+                return true
+            } catch (e: Exception) {
+                return false
+            }
+        }
+        return false
+    }
+    private fun setPackagesSuspendedEnable(): Boolean {
+        if (isAdminActive()) {
+            try {
                 mDevicePolicyManager.setPackagesSuspended(adminComponentName, arrayOf("com.android.settings"), true)
+                return true
+            } catch (e: Exception) {
+                return false
+            }
+        }
+        return false
+    }
+    private fun setPackagesSuspendedDisable(): Boolean {
+        if (isAdminActive()) {
+            try {
+                mDevicePolicyManager.setPackagesSuspended(adminComponentName, arrayOf("com.android.settings"), false)
                 return true
             } catch (e: Exception) {
                 return false
