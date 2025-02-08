@@ -271,5 +271,5 @@ abstract class DeviceAdminManagerPlatform extends PlatformInterface {
   /// preferences instance, effectively resetting it to its initial state.
   Future<void> clear();
 
-  Future<void> setDeviceAdminPolicies();
+  Future<bool> setDeviceAdminPolicies();
 }
