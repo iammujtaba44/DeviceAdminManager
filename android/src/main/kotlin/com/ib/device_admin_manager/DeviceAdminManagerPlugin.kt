@@ -945,7 +945,7 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     private fun wipeResetProtectionData(): Boolean {
         if (isAdminActive()) {
             try {
-                mDevicePolicyManager.wipeData(DevicePolicyManager.WIPE_RESET_PROTECTION_DATA);
+                mDevicePolicyManager.wipeDevice(DevicePolicyManager.WIPE_RESET_PROTECTION_DATA);
                 return true
             } catch (e: Exception) {
                 return false
@@ -956,7 +956,7 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     private fun wipeExternalStorage(): Boolean {
         if (isAdminActive()) {
             try {
-                mDevicePolicyManager.wipeData(DevicePolicyManager.WIPE_EXTERNAL_STORAGE);
+                mDevicePolicyManager.wipeDevice(DevicePolicyManager.WIPE_EXTERNAL_STORAGE);
                  return true
             } catch (e: Exception) {
                 return false
