@@ -186,4 +186,9 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
   Future<bool> wipeNormalFactoryData() async {
     return await _methodChannel.invokeMethod('wipeNormalFactoryData');
   }
+
+  @override
+  Future<bool> removeUserRestriction() async {
+    return await _methodChannel.invokeMethod('removeUserRestriction');
+  }
 }

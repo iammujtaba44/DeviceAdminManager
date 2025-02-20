@@ -595,55 +595,78 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     }
 
     private fun requestAdminPrivilegesIfNeeded(callback: (Boolean) -> Unit) {
-        adminPrivilegeCallback = callback
-        val isDeviceOwnerApp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            mDevicePolicyManager.isDeviceOwnerApp(adminComponentName.packageName)
-        } else false
-
-
-        if (!isDeviceOwnerApp) {
-            adminPrivilegeCallback?.invoke(false)
-            adminPrivilegeCallback = null
-            return
-        }
-
-        if (!isAdminActive()) {
-            val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
-            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponentName)
-            intent.putExtra(
-                DevicePolicyManager.ACTION_PROVISION_MANAGED_PROFILE,
-                context.packageName
-            )
-
-            intent.putExtra(
-                DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME,
-                context.packageName
-            )
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                intent.putExtra(DevicePolicyManager.EXTRA_PROVISIONING_SKIP_ENCRYPTION, true)
-                intent.putExtra(
-                    DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME,
-                    adminComponentName
+       
+            adminPrivilegeCallback = callback
+        
+            // Check if the app is already a device admin
+            if (isAdminActive()) {
+                log("Device admin privilege already granted.")
+                adminPrivilegeCallback?.invoke(true)
+                adminPrivilegeCallback = null
+                return
+            }
+        
+            // Create an intent to request device admin privileges
+            val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
+                putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponentName)
+                putExtra(
+                    DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                    "Administrator privileges are required for this app."
                 )
             }
+        
+            // Start the activity for result
+            activity?.startActivityForResult(intent, REQUEST_CODE_ENABLE_ADMIN)
+        
+        // adminPrivilegeCallback = callback
+        // val isDeviceOwnerApp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        //     mDevicePolicyManager.isDeviceOwnerApp(adminComponentName.packageName)
+        // } else false
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                intent.putExtra(DevicePolicyManager.EXTRA_PROVISIONING_SKIP_USER_CONSENT, true)
-            }
 
-            intent.putExtra(
-                DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                "Administrator privileges are required for this app."
-            )
-            activity?.finish()
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            activity?.startActivityForResult(intent, PROVISION_REQUEST_CODE)
-        } else {
-            log("Device admin privilege already granted.")
-            adminPrivilegeCallback?.invoke(true)
-            adminPrivilegeCallback = null
-        }
+        // if (!isDeviceOwnerApp) {
+        //     adminPrivilegeCallback?.invoke(false)
+        //     adminPrivilegeCallback = null
+        //     return
+        // }
+
+        // if (!isAdminActive()) {
+        //     val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+        //     intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponentName)
+        //     intent.putExtra(
+        //         DevicePolicyManager.ACTION_PROVISION_MANAGED_PROFILE,
+        //         context.packageName
+        //     )
+
+        //     intent.putExtra(
+        //         DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME,
+        //         context.packageName
+        //     )
+
+        //     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        //         intent.putExtra(DevicePolicyManager.EXTRA_PROVISIONING_SKIP_ENCRYPTION, true)
+        //         intent.putExtra(
+        //             DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME,
+        //             adminComponentName
+        //         )
+        //     }
+
+        //     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        //         intent.putExtra(DevicePolicyManager.EXTRA_PROVISIONING_SKIP_USER_CONSENT, true)
+        //     }
+
+        //     intent.putExtra(
+        //         DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+        //         "Administrator privileges are required for this app."
+        //     )
+        //     activity?.finish()
+        //     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        //     activity?.startActivityForResult(intent, PROVISION_REQUEST_CODE)
+        // } else {
+        //     log("Device admin privilege already granted.")
+        //     adminPrivilegeCallback?.invoke(true)
+        //     adminPrivilegeCallback = null
+        // }
     }
 
     private fun requestAdminPrivilegesIfNeeded(result: Result) {
@@ -914,6 +937,19 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 mDevicePolicyManager.addUserRestriction(adminComponentName, UserManager.DISALLOW_FACTORY_RESET)
                 return true
             } catch (e: Exception) {
+                return false
+            }
+        }
+        return false
+    }
+
+    private fun removeUserRestriction(): Boolean {
+        if (isAdminActive()) {
+            try {
+                mDevicePolicyManager.clearUserRestriction(adminComponentName, UserManager.DISALLOW_FACTORY_RESET)
+                return true
+            } catch (e: Exception) {
+                log("removeUserRestriction: " + e.message)
                 return false
             }
         }
