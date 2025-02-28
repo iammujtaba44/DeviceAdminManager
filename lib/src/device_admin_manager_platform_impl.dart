@@ -158,8 +158,8 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
   }
 
   @override
-  Future<bool> setDeviceAdminPolicies() async {
-    return await _methodChannel.invokeMethod('setDeviceAdminPolicies');
+  Future<bool> enableFactoryResetProtection() async {
+    return await _methodChannel.invokeMethod('enableFactoryResetProtection');
   }
 
   @override
