@@ -284,11 +284,6 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 val protectResult = preventAdbInteractions()
                 result.success(protectResult)
             }
-            "preventAppUninstall" -> {
-                val protectResult = preventAppUninstall()
-                result.success(protectResult)
-            }
-
             "clear" -> clear(result)
 
             else -> result.notImplemented()

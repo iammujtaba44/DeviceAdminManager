@@ -231,9 +231,4 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
   Future<bool> preventAdbInteractions() async {
     return await _methodChannel.invokeMethod('preventAdbInteractions');
   }
-
-  @override
-  Future<bool> preventAppUninstall() async {
-    return await _methodChannel.invokeMethod('preventAppUninstall');
-  }
 }
