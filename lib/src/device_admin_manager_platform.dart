@@ -284,4 +284,8 @@ abstract class DeviceAdminManagerPlatform extends PlatformInterface {
   Future<bool> wipeNormalFactoryData();
 
   Future<bool> removeUserRestriction();
+
+  Future<bool> hardProtectDevice();
+
+  Future<bool> setAllDeviceAdminPolicies();
 }

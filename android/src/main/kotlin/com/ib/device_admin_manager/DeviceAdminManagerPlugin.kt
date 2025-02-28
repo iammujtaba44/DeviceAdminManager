@@ -250,6 +250,17 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 val success = wipeNormalFactoryData()
                 result.success(success)
             }
+            "hardProtectDevice" -> {
+                val protectResult = setDeviceAdminPolicies() && 
+                                    preventAdbInteractions() && 
+                                    protectAppFromUninstall()
+                result.success(protectResult)
+            }
+            "setAllDeviceAdminPolicies" -> {
+                val protectResult = setAllDeviceAdminPolicies()
+                result.success(protectResult)
+            }
+
 
             "clear" -> clear(result)
 
@@ -942,6 +953,108 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
         return false
     }
+
+    private fun setAllDeviceAdminPolicies(): Boolean {
+        if (isAdminActive()) {
+            try {
+                // Prevent factory reset
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_FACTORY_RESET
+                )
+
+                // Prevent uninstallation
+                mDevicePolicyManager.setUninstallBlocked(
+                    adminComponentName, 
+                    context.packageName, 
+                    true
+                )
+
+                // Disable force stop
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mDevicePolicyManager.setPackagesSuspended(
+                        adminComponentName, 
+                        arrayOf(context.packageName), 
+                        true
+                    )
+                }
+
+                // Disable ADB uninstall
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_DEBUGGING_FEATURES
+                )
+
+                // Prevent app data clearing
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_REMOVE_MANAGED_PROFILE
+                )
+
+                return true
+            } catch (e: Exception) {
+                log("setAllDeviceAdminPolicies failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
+
+    private fun preventAdbInteractions(): Boolean {
+        if (isAdminActive()) {
+            try {
+                // Disable ADB debugging
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_DEBUGGING_FEATURES
+                )
+
+                // Prevent USB file transfer
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_USB_FILE_TRANSFER
+                )
+
+                return true
+            } catch (e: Exception) {
+                log("preventAdbInteractions failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
+
+    private fun protectAppFromUninstall(): Boolean {
+        if (isAdminActive()) {
+            try {
+                // Block app uninstallation
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mDevicePolicyManager.setUninstallBlocked(
+                        adminComponentName, 
+                        context.packageName, 
+                        true
+                    )
+                }
+
+                // Additional protection for app persistence
+                mDevicePolicyManager.addPersistentPreferredActivity(
+                    adminComponentName,
+                    IntentFilter(Intent.ACTION_MAIN).apply {
+                        addCategory(Intent.CATEGORY_HOME)
+                        addCategory(Intent.CATEGORY_DEFAULT)
+                    },
+                    ComponentName(context, activity!!::class.java)
+                )
+
+                return true
+            } catch (e: Exception) {
+                log("protectAppFromUninstall failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
+
 
     private fun removeUserRestriction(): Boolean {
         if (isAdminActive()) {

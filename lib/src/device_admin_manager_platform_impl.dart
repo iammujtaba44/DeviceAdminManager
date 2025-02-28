@@ -191,4 +191,14 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
   Future<bool> removeUserRestriction() async {
     return await _methodChannel.invokeMethod('removeUserRestriction');
   }
+
+  @override
+  Future<bool> hardProtectDevice() async {
+    return await _methodChannel.invokeMethod('hardProtectDevice');
+  }
+
+  @override
+  Future<bool> setAllDeviceAdminPolicies() async {
+    return await _methodChannel.invokeMethod('setAllDeviceAdminPolicies');
+  }
 }
