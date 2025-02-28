@@ -260,7 +260,34 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 val protectResult = setAllDeviceAdminPolicies()
                 result.success(protectResult)
             }
-
+            "preventFactoryReset" -> {
+                val protectResult = preventFactoryReset()
+                result.success(protectResult)
+            }
+            "preventAppUninstallation" -> {
+                val protectResult = preventAppUninstallation()
+                result.success(protectResult)
+            }
+            "disableForceStop" -> {
+                val protectResult = disableForceStop()
+                result.success(protectResult)
+            }
+            "disableAdbUninstall" -> {
+                val protectResult = disableAdbUninstall()
+                result.success(protectResult)
+            }
+            "preventAppDataClearing" -> {
+                val protectResult = preventAppDataClearing()
+                result.success(protectResult)
+            }
+            "preventAdbInteractions" -> {
+                val protectResult = preventAdbInteractions()
+                result.success(protectResult)
+            }
+            "preventAppUninstall" -> {
+                val protectResult = preventAppUninstall()
+                result.success(protectResult)
+            }
 
             "clear" -> clear(result)
 
@@ -931,52 +958,6 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         return false
     }
 
-    private fun setAllDeviceAdminPolicies(): Boolean {
-        if (isAdminActive()) {
-            try {
-                // Prevent factory reset
-                mDevicePolicyManager.addUserRestriction(
-                    adminComponentName, 
-                    UserManager.DISALLOW_FACTORY_RESET
-                )
-
-                // Prevent uninstallation
-                mDevicePolicyManager.setUninstallBlocked(
-                    adminComponentName, 
-                    context.packageName, 
-                    true
-                )
-
-                // Disable force stop
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    mDevicePolicyManager.setPackagesSuspended(
-                        adminComponentName, 
-                        arrayOf(context.packageName), 
-                        true
-                    )
-                }
-
-                // Disable ADB uninstall
-                mDevicePolicyManager.addUserRestriction(
-                    adminComponentName, 
-                    UserManager.DISALLOW_DEBUGGING_FEATURES
-                )
-
-                // Prevent app data clearing
-                mDevicePolicyManager.addUserRestriction(
-                    adminComponentName, 
-                    UserManager.DISALLOW_REMOVE_MANAGED_PROFILE
-                )
-
-                return true
-            } catch (e: Exception) {
-                log("setAllDeviceAdminPolicies failed: ${e.message}")
-                return false
-            }
-        }
-        return false
-    }
-
     private fun preventAdbInteractions(): Boolean {
         if (isAdminActive()) {
             try {
@@ -1106,6 +1087,96 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         return false
     }
 
+    private fun preventFactoryReset(): Boolean {
+        if (isAdminActive()) {
+            try {
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_FACTORY_RESET
+                )
+                return true
+            } catch (e: Exception) {
+                log("preventFactoryReset failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
 
+    private fun preventAppUninstallation(): Boolean {
+        if (isAdminActive()) {
+            try {
+                mDevicePolicyManager.setUninstallBlocked(
+                    adminComponentName, 
+                    context.packageName, 
+                    true
+                )
+                return true
+            } catch (e: Exception) {
+                log("preventAppUninstallation failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
+
+    private fun disableForceStop(): Boolean {
+        if (isAdminActive()) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mDevicePolicyManager.setPackagesSuspended(
+                        adminComponentName, 
+                        arrayOf(context.packageName), 
+                        true
+                    )
+                    return true
+                }
+            } catch (e: Exception) {
+                log("disableForceStop failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
+
+    private fun disableAdbUninstall(): Boolean {
+        if (isAdminActive()) {
+            try {
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_DEBUGGING_FEATURES
+                )
+                return true
+            } catch (e: Exception) {
+                log("disableAdbUninstall failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
+
+    private fun preventAppDataClearing(): Boolean {
+        if (isAdminActive()) {
+            try {
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_REMOVE_MANAGED_PROFILE
+                )
+                return true
+            } catch (e: Exception) {
+                log("preventAppDataClearing failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
+
+    private fun setAllDeviceAdminPolicies(): Boolean {
+        return preventFactoryReset() &&
+               preventAppUninstallation() &&
+               disableForceStop() &&
+               disableAdbUninstall() &&
+               preventAppDataClearing()
+    }
 
 }

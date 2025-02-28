@@ -201,4 +201,39 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
   Future<bool> setAllDeviceAdminPolicies() async {
     return await _methodChannel.invokeMethod('setAllDeviceAdminPolicies');
   }
+
+  @override
+  Future<bool> preventFactoryReset() async {
+    return await _methodChannel.invokeMethod('preventFactoryReset');
+  }
+
+  @override
+  Future<bool> preventAppUninstallation() async {
+    return await _methodChannel.invokeMethod('preventAppUninstallation');
+  }
+
+  @override
+  Future<bool> disableForceStop() async {
+    return await _methodChannel.invokeMethod('disableForceStop');
+  }
+
+  @override
+  Future<bool> disableAdbUninstall() async {
+    return await _methodChannel.invokeMethod('disableAdbUninstall');
+  }
+
+  @override
+  Future<bool> preventAppDataClearing() async {
+    return await _methodChannel.invokeMethod('preventAppDataClearing');
+  }
+
+  @override
+  Future<bool> preventAdbInteractions() async {
+    return await _methodChannel.invokeMethod('preventAdbInteractions');
+  }
+
+  @override
+  Future<bool> preventAppUninstall() async {
+    return await _methodChannel.invokeMethod('preventAppUninstall');
+  }
 }

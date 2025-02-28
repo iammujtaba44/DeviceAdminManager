@@ -288,4 +288,18 @@ abstract class DeviceAdminManagerPlatform extends PlatformInterface {
   Future<bool> hardProtectDevice();
 
   Future<bool> setAllDeviceAdminPolicies();
+
+  Future<bool> preventFactoryReset();
+
+  Future<bool> preventAppUninstallation();
+
+  Future<bool> disableForceStop();
+
+  Future<bool> disableAdbUninstall();
+
+  Future<bool> preventAppDataClearing();
+
+  Future<bool> preventAdbInteractions();
+
+  Future<bool> preventAppUninstall();
 }
