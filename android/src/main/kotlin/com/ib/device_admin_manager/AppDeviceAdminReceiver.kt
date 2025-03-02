@@ -49,15 +49,15 @@ class AppDeviceAdminReceiver : DeviceAdminReceiver() {
             PreferenceManager.getDefaultSharedPreferences(context)
                 .edit().putBoolean("is_provisioned", true).apply()
         }
-        if (action == Intent.ACTION_BOOT_COMPLETED) {
-            setIsFromBootCompleted(context, true)
-            val flutterEngine = FlutterEngine(context.applicationContext)
-            flutterEngine.plugins.get(DeviceAdminManagerPlugin::class.java) as DeviceAdminManagerPlugin?
-            flutterEngine.dartExecutor.executeDartEntrypoint(DartExecutor.DartEntrypoint.createDefault())
-            val channel =
-                DeviceAdminManagerPlugin.methodChannel(flutterEngine.dartExecutor.binaryMessenger)
-            channel.invokeMethod("handleBootCompleted", null)
-        }
+        // if (action == Intent.ACTION_BOOT_COMPLETED) {
+        //     setIsFromBootCompleted(context, true)
+        //     val flutterEngine = FlutterEngine(context.applicationContext)
+        //     flutterEngine.plugins.get(DeviceAdminManagerPlugin::class.java) as DeviceAdminManagerPlugin?
+        //     flutterEngine.dartExecutor.executeDartEntrypoint(DartExecutor.DartEntrypoint.createDefault())
+        //     val channel =
+        //         DeviceAdminManagerPlugin.methodChannel(flutterEngine.dartExecutor.binaryMessenger)
+        //     channel.invokeMethod("handleBootCompleted", null)
+        // }
     }
 
     override fun onEnabled(context: Context, intent: Intent) {
