@@ -303,7 +303,8 @@ abstract class DeviceAdminManagerPlatform extends PlatformInterface {
 
   Future<bool> disableSafeBoot();
 
-  Future<bool> disableOemUnlock();
+  //TODO(Mujtaba):  This is not working on Android 13 and above
+  // Future<bool> disableOemUnlock();
 
   Future<bool> applyPermission();
 

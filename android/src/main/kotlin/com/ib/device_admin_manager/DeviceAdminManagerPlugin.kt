@@ -296,10 +296,6 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 val protectResult = disableSafeBoot()
                 result.success(protectResult)
             }
-            // "disableOemUnlock" -> {
-            //     val protectResult = disableOemUnlock()
-            //     result.success(protectResult)
-            // }
             "clear" -> clear(result)
 
             else -> result.notImplemented()
@@ -1211,21 +1207,25 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
         return false
     }
-    private fun disableOemUnlock(): Boolean {
-        if (isAdminActive()) {
-            try {
-                mDevicePolicyManager.addUserRestriction(
-                    adminComponentName, 
-                    UserManager.DISALLOW_OEM_UNLOCK
-                )
-                return true
-            } catch (e: Exception) {
-                log("disableOemUnlock failed: ${e.message}")
-                return false
-            }
-        }
-        return false
-    }
+    //TODO(Mujtaba):  This is not working on Android 13 and above
+    // private fun disableOemUnlock(): Boolean {
+    //     if (isAdminActive()) {
+    //         try {
+    //             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // Android 6.0 (API 23) and above
+    //                 mDevicePolicyManager.addUserRestriction(
+    //                     adminComponentName, 
+    //                     UserManager.DISALLOW_OEM_UNLOCK
+    //                 )
+    //                 return true
+    //             }
+    //             return false
+    //         } catch (e: Exception) {
+    //             log("disableOemUnlock failed: ${e.message}")
+    //             return false
+    //         }
+    //     }
+    //     return false
+    // }
 
 
     private fun applyPermission(): Boolean {

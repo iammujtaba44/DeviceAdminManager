@@ -237,10 +237,11 @@ class DeviceAdminManagerPlatformImpl extends DeviceAdminManagerPlatform {
     return await _methodChannel.invokeMethod('disableSafeBoot');
   }
 
-  @override
-  Future<bool> disableOemUnlock() async {
-    return await _methodChannel.invokeMethod('disableOemUnlock');
-  }
+  //TODO(Mujtaba):  This is not working on Android 13 and above
+  // @override
+  // Future<bool> disableOemUnlock() async {
+  //   return await _methodChannel.invokeMethod('disableOemUnlock');
+  // }
 
   @override
   Future<bool> applyPermission() async {
