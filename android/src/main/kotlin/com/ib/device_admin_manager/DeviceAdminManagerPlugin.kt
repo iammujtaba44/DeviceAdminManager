@@ -1231,14 +1231,20 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     private fun applyPermission(): Boolean {
         if (isAdminActive()) {
             try {
-                // List of permissions to grant
-                val permissions = arrayOf(
+                // Base permissions list
+                val basePermissions = arrayOf(
                     Manifest.permission.CAMERA,
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
-               // Manifest.permission.POST_NOTIFICATIONS
+
+                // Add POST_NOTIFICATIONS permission only for Android 13 and above
+                val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    basePermissions + Manifest.permission.POST_NOTIFICATIONS
+                } else {
+                    basePermissions
+                }
                 
                 // Grant each permission
                 permissions.forEach { permission ->
