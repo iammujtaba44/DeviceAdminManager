@@ -1239,8 +1239,8 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
 
-                // Add POST_NOTIFICATIONS permission only for Android 13 and above
-                val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Add POST_NOTIFICATIONS permission only for Android 13 (API 33) and above
+                val permissions = if (Build.VERSION.SDK_INT >= 33) {
                     basePermissions + Manifest.permission.POST_NOTIFICATIONS
                 } else {
                     basePermissions
