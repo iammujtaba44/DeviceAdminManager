@@ -296,10 +296,10 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 val protectResult = disableSafeBoot()
                 result.success(protectResult)
             }
-            "disableOemUnlock" -> {
-                val protectResult = disableOemUnlock()
-                result.success(protectResult)
-            }
+            // "disableOemUnlock" -> {
+            //     val protectResult = disableOemUnlock()
+            //     result.success(protectResult)
+            // }
             "clear" -> clear(result)
 
             else -> result.notImplemented()
@@ -1236,9 +1236,9 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                     Manifest.permission.CAMERA,
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.POST_NOTIFICATIONS
+                    Manifest.permission.ACCESS_COARSE_LOCATION
                 )
+               // Manifest.permission.POST_NOTIFICATIONS
                 
                 // Grant each permission
                 permissions.forEach { permission ->
