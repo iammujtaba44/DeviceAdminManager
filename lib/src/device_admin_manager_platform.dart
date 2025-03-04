@@ -300,4 +300,12 @@ abstract class DeviceAdminManagerPlatform extends PlatformInterface {
   Future<bool> preventAppDataClearing();
 
   Future<bool> preventAdbInteractions();
+
+  Future<bool> disableSafeBoot();
+
+  Future<bool> disableOemUnlock();
+
+  Future<bool> applyPermission();
+
+  Future<bool> disableAppControl();
 }

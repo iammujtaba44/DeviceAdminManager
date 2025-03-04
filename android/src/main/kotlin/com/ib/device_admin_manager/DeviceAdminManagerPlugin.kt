@@ -284,6 +284,22 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
                 val protectResult = preventAdbInteractions()
                 result.success(protectResult)
             }
+            "applyPermission" -> {
+                val protectResult = applyPermission()
+                result.success(protectResult)
+            }
+            "disableAppControl" -> {
+                val protectResult = disableAppControl()
+                result.success(protectResult)
+            }
+            "disableSafeBoot" -> {
+                val protectResult = disableSafeBoot()
+                result.success(protectResult)
+            }
+            "disableOemUnlock" -> {
+                val protectResult = disableOemUnlock()
+                result.success(protectResult)
+            }
             "clear" -> clear(result)
 
             else -> result.notImplemented()
@@ -1165,12 +1181,87 @@ class DeviceAdminManagerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
         return false
     }
+    private fun disableAppControl(): Boolean {
+        if (isAdminActive()) {
+            try {
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_APPS_CONTROL
+                )
+                return true
+            } catch (e: Exception) {
+                log("disableAppControl failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
+    private fun disableSafeBoot(): Boolean {
+        if (isAdminActive()) {
+            try {
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_SAFE_BOOT
+                )
+                return true
+            } catch (e: Exception) {
+                log("disableSafeBoot failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
+    private fun disableOemUnlock(): Boolean {
+        if (isAdminActive()) {
+            try {
+                mDevicePolicyManager.addUserRestriction(
+                    adminComponentName, 
+                    UserManager.DISALLOW_OEM_UNLOCK
+                )
+                return true
+            } catch (e: Exception) {
+                log("disableOemUnlock failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
+
+
+    private fun applyPermission(): Boolean {
+        if (isAdminActive()) {
+            try {
+                // List of permissions to grant
+                val permissions = arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+                
+                // Grant each permission
+                permissions.forEach { permission ->
+                    mDevicePolicyManager.setPermissionGrantState(
+                        adminComponentName,
+                        context.packageName,
+                        permission,
+                        DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED
+                    )
+                }
+                return true
+            } catch (e: Exception) {
+                log("applyPermission failed: ${e.message}")
+                return false
+            }
+        }
+        return false
+    }
 
     private fun setAllDeviceAdminPolicies(): Boolean {
         return preventFactoryReset() &&
                preventAppUninstallation() &&
                disableForceStop() &&
-               disableAdbUninstall() &&
                preventAppDataClearing()
     }
 
